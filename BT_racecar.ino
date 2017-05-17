@@ -4,21 +4,22 @@
 /*
  *BT_racecar.ino 
  *by Malin Gnipping, 2017-05-04
+ *Written for Arduino Nano board 
  *Bluetooth controlled model race car with Electronic Speed Controller S8A RTR and servo,
  *light/darkness detection activating night mode for lights, light sensing using photoresistors on voltage dividers with 10KOhm pull-down
  *automatic reverse mode triggering when pulse goes below 1440 microseconds
  */
 
 //pins
-#define MPIN 10
-#define SPIN 9
-#define LPINF 6
-#define LPINR 5
+#define MPIN 10 //output signal to ESC motor speed controller
+#define SPIN 9  //output signal to servo motor
+#define LPINF 6 //front lights
+#define LPINR 5 //rear lights
 
 //values for auto reverse mode 
 #define MICROS_TRESH_FWD 1540  //starting pulse width to trigger ESC forward mode
 #define MICROS_TRESH_REV_H 1490 //high treshold pulse width to trigger ESC reverse mode
-#define MICROS_TRESH_REV_L 1440 //high treshold pulse width to trigger ESC reverse mode
+#define MICROS_TRESH_REV_L 1440 //low treshold pulse width to trigger ESC reverse mode
 #define MILLIS_HOLD_TRESH_H 40  //time for keeping high treshold pulse to trigger ESC rev. mode
 #define MILLIS_HOLD_TRESH_L 100 //time for keeping below low treshold pulse to trigger ESC rev. mode
 
@@ -41,8 +42,8 @@ SimpleTimer timer;
 
 byte buffer[4];
 
-unsigned short pulse_usM = MICROS_PULSE_M_DEF ; //def. motor pulse
-unsigned short pulse_usS = MICROS_PULSE_S_DEF ; //center servo pulse
+unsigned short pulse_usM = MICROS_PULSE_M_DEF ; //default motor pulse width
+unsigned short pulse_usS = MICROS_PULSE_S_DEF ; //center servo pulse width
 unsigned short pulse_targetM = MICROS_PULSE_M_DEF ; 
 unsigned short pulse_targetS = MICROS_PULSE_S_DEF ; 
 
@@ -68,7 +69,6 @@ void setup() {
   pinMode(LPINR, OUTPUT);
 
   /*Bluetooth communication*/
-  Serial.flush();
   Serial.begin(9600);
 
   timer.setInterval(100, readLightSetLEDs);      //set up light/dakness detection
